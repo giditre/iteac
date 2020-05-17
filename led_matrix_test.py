@@ -217,21 +217,21 @@ def main():
 
   while True:
 
-    display_string_scroll("send nudes", persistence=0.1)
+    display_string_scroll("This is a very long text", persistence=1.1)
     #display_image_by_row(image_skull, persistence=1)
 
     time.sleep(3)
 
 if __name__ == '__main__':
 
-  parser = argparse.ArgumentParser()
+  #parser = argparse.ArgumentParser()
   
   #parser.add_argument("mand-arg", help="Mandatory positional argument.")
-  parser.add_argument("-c", "--char", help="Character to be displayed", required=False)
+  #parser.add_argument("-c", "--char", help="Character to be displayed", required=False)
   #parser.add_argument("-b", "--opt-arg-b", help="Optional string argument, default: 3", type=int, nargs="?", default=3)
   #parser.add_argument("-c", "--opt-arg-c", help="Optional boolean argument, default: False", action="store_true", default=False)
   
-  args = parser.parse_args()
+  #args = parser.parse_args()
 
   try:
     main()
