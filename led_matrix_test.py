@@ -150,7 +150,7 @@ def create_large_image(hex_images):
   return large_image
 
 def display_char(char, char_set="set1", persistence=0):
-  hex_string = char_sets["{}_{}".format(char_set, char)]
+  hex_string = char_sets[char_set][char]
   image = hex_to_image(hex_string)
   display_image_by_row(image, persistence)
 
@@ -161,7 +161,7 @@ def display_string_static(text, char_set="set1", persistence=1):
 def display_string_scroll(text, char_set="set1", persistence=1):
   hex_chars = []
   for char in text:
-    hex_chars.append(char_sets["{}_{}".format(char_set, char)])
+    hex_chars.append(char_sets[char_set][char])
   image = create_large_image(hex_chars)
   # add left and right blanks
   for r in range(8):
@@ -217,7 +217,7 @@ def main():
 
   while True:
 
-    display_string_scroll("This is a very long text", persistence=1.1)
+    display_string_scroll("This is a very long text", char_set="set2", persistence=0.1)
     #display_image_by_row(image_skull, persistence=1)
 
     time.sleep(3)
