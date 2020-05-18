@@ -219,8 +219,8 @@ def main():
   while True:
 
     #display_string_scroll("Ne valeva la pena", char_set="set2", persistence=0.08)
-    #display_image_by_row(image_skull, persistence=1)
-    display_string_scroll("{0:%a %d %m %Y %H %M}".format(datetime.datetime.now()), char_set="set2", persistence=0.08)
+    display_image_by_row(image_heart, persistence=0)
+    #display_string_scroll("{0:%a %d %m %Y %H %M}".format(datetime.datetime.now()), char_set="set2", persistence=0.08)
 
     time.sleep(3)
 
