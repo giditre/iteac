@@ -24,7 +24,6 @@ pi.write(B_pos, 0)
 
 pi.wave_clear()
 
-pulse_period = 1000
 
 #clockwise_wave = []
 #
@@ -53,11 +52,15 @@ pulse_period = 1000
 
 #pulse_list = ['0101', '1101', '1111', '1011']
 #pulse_list = ['0101', '1101', '1111', '1011', '0000']
-#pulse_list = ['1010', '0010', '0000', '0100']
+#pulse_list = ['1000', '1100', '1101', '1111', '0111', '0101', '0001', '0000']
+#pulse_list = ['0101', '0110', '1010', '1001']
+pulse_list = ['1010', '1001', '0101', '0110']
 #pulse_list = ['1010', '1000', '0000', '0010']
 #pulse_list = ['0100', '1100', '1101', '1111', '0111', '0101', '0001', '0000']
 #pulse_list = ['0100', '0110', '0010']
 #pulse_list = ['1000', '1100', '1110', '1111']
+
+pulse_period = 100000
 
 test_wave = []
 
@@ -87,7 +90,7 @@ try:
       #pi.write(B_neg, 0)
       #pi.write(B_pos, 0)
       #input("Press Enter")
-      time.sleep(0.1)
+      #time.sleep(0.1)
   pi.wave_tx_stop()
   pi.wave_delete(test_wid)
   #pi.wave_delete(clockwise_wid)
