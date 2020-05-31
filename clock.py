@@ -13,24 +13,32 @@ ADDR0 = 36
 ADDR1 = 38
 ADDR2 = 40
 
-position_dict = {
-  "R3": 0,
-  "R6": 1,
-  "C5": 2,
-  "R8": 3,
-  "C3": 4,
-  "C2": 5,
-  "R7": 6,
-  "R5": 7,
-  "R1": 8,
-  "C4": 9,
-  "C6": 10,
-  "R4": 11,
-  "R2": 12,
-  "C1": 13,
-  "C7": 14,
-  "C8": 15
+segment_dict = {
+  "a": 0b00000010,
+  "b": 0b00000001,
+  "c": 0b00001000,
+  "d": 0b00100000,
+  "e": 0b00010000,
+  "f": 0b10000000,
+  "g": 0b01000000,
+  "p": 0b00000100
 }
+
+disp_char = {
+  "A": "abcefg",
+  "b": "cdef",
+  "C": "adef",
+  "c": "deg"
+}
+
+disp_segments = {}
+for c in disp_char:  
+  segments = disp_char[c]
+  disp_segments[c] = 0
+  for s in segments:
+    disp_segments[c] = disp_segments[c] | segment_dict[s]
+
+print([bin(disp_segments[s]) for s in disp_segments])
 
 def store():
   GPIO.output(REG_ST, GPIO.HIGH)
@@ -46,7 +54,7 @@ def shift():
 
 def out_word(word):
   for i in range(len(word)):
-    GPIO.output(REG_D, word[i])
+    GPIO.output(REG_D, word[i]=="1")
     shift()
   store()
 
@@ -98,15 +106,16 @@ def main(*args, **kwargs):
   #out_word(7*[False]+[True])
   #GPIO.output(REG_D, GPIO.LOW)  
 
-  out_word(8*[True])
+  #out_word(8*[True])
 
   while True:
     for i in range(0,8,1):
       #print(a)
-      #out_word((8-i)*[True]+i*[False])
+      #out_word((8-i-1)*[False] + [True] + i*[False])
+      out_word("{:08b}".format(disp_segments["A"]))
       #out_word(8*[True])
       set_addr(i)
-      time.sleep(0.001)
+      time.sleep(0.01)
       shift()
       store()
     #out_word(7*[False]+[True])
