@@ -168,7 +168,7 @@ def main(*args, **kwargs):
     #  store()
     #reg_out_sequence(7*[False]+[True])
     #GPIO.output(REG_D, GPIO.LOW)
-    display_text("sendnude")
+    #display_text("ciaociao")
     #display_text("{0:%H%M%d%m}".format(datetime.datetime.now()), persistence=5)
 
 if __name__ == '__main__':
