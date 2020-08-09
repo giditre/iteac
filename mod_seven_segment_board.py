@@ -1,13 +1,14 @@
 import RPi.GPIO as GPIO
 import time
-import argparse
 import json
-import datetime
+import threading
 
-class SevenSegmentBoard():
+class SevenSegmentBoard(threading.Thread):
 
   def __init__(self, reg_d=24, reg_st=26, reg_sh=32, addr0=36, addr1=38, addr2=40):
-        
+    
+    super().__init__()
+
     # REG GPIO pins
     self.REG_D = reg_d
     self.REG_ST = reg_st
@@ -104,6 +105,10 @@ class SevenSegmentBoard():
     GPIO.output(self.ADDR1, GPIO.LOW)
     GPIO.output(self.ADDR2, GPIO.LOW)
 
+    self.text = "testtest"
+
+    self.stop_flag = False
+
     self.reg_clear()
 
 
@@ -132,31 +137,52 @@ class SevenSegmentBoard():
   
   def reg_clear(self):
     self.reg_out_sequence("{:08b}".format(0))
-
  
-  def display_text(self, text, active_displays=list(range(8)), persistence=0, char_delay=0.001):
+  def display_text(self, user_text="", active_displays=list(range(8)), persistence=0, char_delay=0.001):
+    if user_text:
+      text = user_text
+    else:
+      text = self.text
     if len(text) > len(active_displays):
       print("WARNING: you need more than {} displays to display text {} of length {}".format(len(active_displays), text, len(text)))
       text = text[:len(active_displays)]
     if persistence > 0:
       end_t = time.time() + persistence
-    else:
+    elif persistence == 0:
       end_t = time.time() + char_delay*len(text)
+    else:
+      end_t = 2147385600
     #print("end", end_t)
-    text = text.lower()
     while time.time() < end_t:
       for i in range(len(text)):
         self.reg_out_sequence("{:08b}".format(self.disp_char_segments[text[i]]))
         self.set_addr(i)
         time.sleep(char_delay)
       #print("time", time.time())
+      if not user_text and text != self.text:
+        text = self.text
+      if self.stop_flag:
+        break
     self.reg_clear()
 
   def cleanup(self):
+    self.stop_flag = True
     self.reg_clear()
+
+  def get_text(self):
+    return self.text
   
+  def set_text(self, text):
+    self.text = text.lower()
+
+  def run(self):
+    self.display_text(persistence=-1)
+    # will run forever
+
 if __name__ == '__main__':
 
+  import datetime
+  #import argparse
   #parser = argparse.ArgumentParser()
   
   #parser.add_argument("mand-arg", help="Mandatory positional argument.")
@@ -166,7 +192,7 @@ if __name__ == '__main__':
   
   #args = parser.parse_args()
 
-  ssb = SevenSegBoard()
+  ssb = SevenSegmentBoard()
   try:
     while True:
       #cb.display_text("lab reti")
