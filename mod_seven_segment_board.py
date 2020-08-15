@@ -5,7 +5,7 @@ import threading
 
 class SevenSegmentBoard(threading.Thread):
 
-  def __init__(self, reg_d=24, reg_st=26, reg_sh=32, addr0=36, addr1=38, addr2=40):
+  def __init__(self, reg_d=16, reg_st=18, reg_sh=22, addr0=24, addr1=26, addr2=32):
     
     super().__init__()
 
@@ -151,6 +151,7 @@ class SevenSegmentBoard(threading.Thread):
     elif persistence == 0:
       end_t = time.time() + char_delay*len(text)
     else:
+      # a very far moment in the future
       end_t = 2147385600
     #print("end", end_t)
     while time.time() < end_t:
