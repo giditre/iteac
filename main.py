@@ -27,38 +27,53 @@ bzr = Buzzer()
 
 btn = HaltButton()
 
-#wii = nunchuck()
+wii = nunchuck()
+
+modes = ["Demo", "7 Segment Board", "LED Matrix", "Buzzer", "Presence sensor", "Floppy Music", "Printer Cart"]
+
+mode_i = 0
 
 try:
+
   while True:
-    #if not wii.button_c() and not wii.button_z():
-    #  time.sleep(0.1)
-    #elif wii.button_c() and not wii.button_z():
-    #  ssb.set_text("{:04d}{:04d}".format(wii.joystick_x(), wii.joystick_y()))
-    #  #time.sleep(0.1)
-    #elif not wii.button_c() and wii.button_z():
-    #  lmb.display_string_scroll("text", persistence=0.08)
-    #else:
-    #  time.sleep(0.1)
 
-    now = datetime.datetime.now()
+    if wii.button_z():
+      tmp_mode_i = mode_i
+      lcd.lcd_text("{:16}{:16}".format("Select mode:", modes[tmp_mode_i])
+      while wii.button_z():
+        j_dir = wii.jooystick_direction()
+        if j_dir == "R":
+          if tmp_mode_i > 0:
+            tmp_mode_i -= 1
+            lcd.lcd_text("{:16}{:16}".format("Select mode:", modes[tmp_mode_i])
+        elif j_dir == "L":
+          if tmp_mode_i < len(modes)-2:
+            tmp_mode_i += 1
+            lcd.lcd_text("{:16}{:16}".format("Select mode:", modes[tmp_mode_i])
+      mode_i = tmp_mode_i
 
-    #ssb.display_text("{0:%H%M%d%m}".format(datetime.datetime.now()), persistence=5)
-    ssb.display_text("{0:%H%M}".format(now), persistence=3)
-    ssb.display_text("    {0:%d%m}".format(datetime.datetime.now()), persistence=3)
+    if mode_i == 0:
+      now = datetime.datetime.now()
 
-    lmb.display_string_scroll("{0:%A}".format(now), persistence=0.08)
+      #ssb.display_text("{0:%H%M%d%m}".format(datetime.datetime.now()), persistence=5)
+      ssb.display_text("{0:%H%M}".format(now), persistence=3)
+      ssb.display_text("    {0:%d%m}".format(datetime.datetime.now()), persistence=3)
 
-    lcd.lcd_text("{1:16}{0:%a} {0:%b} {0:%d} {0:%Y}".format(now, "Today's date:"))
-    lcd.clear()
+      lmb.display_string_scroll("{0:%A}".format(now), persistence=0.08)
 
-    for i in range(3):
-      bzr.beep(0.1)
-      time.sleep(0.1)
+      lcd.lcd_text("{1:16}{0:%a} {0:%b} {0:%d} {0:%Y}".format(now, "Today's date:"))
+      lcd.clear()
 
-    fdr.play_wave("tonelist_imperialmarch_short.json")
+      for i in range(3):
+        bzr.beep(0.1)
+        time.sleep(0.1)
 
-    dcm.wiggle(0.3)
+      fdr.play_wave("tonelist_imperialmarch_short.json")
+
+      dcm.wiggle(0.3)
+
+    else:
+      lcd.lcd_text("{:16}{:16}".format(modes[tmp_mode_i], "not implemented"))
 
     if btn.pressed():
       print("HaltButton")
@@ -67,6 +82,7 @@ try:
 except KeyboardInterrupt:
   print("KeyboardInterrupt")
   pass
+
 finally:
   print("Cleanup")
   ssb.cleanup()
