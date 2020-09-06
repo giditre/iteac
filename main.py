@@ -39,17 +39,17 @@ try:
 
     if wii.button_z():
       tmp_mode_i = mode_i
-      lcd.lcd_text("{:16}{:16}".format("Select mode:", modes[tmp_mode_i])
+      lcd.lcd_text("{:16}{:16}".format("Select mode:", modes[tmp_mode_i]))
       while wii.button_z():
         j_dir = wii.jooystick_direction()
         if j_dir == "R":
           if tmp_mode_i > 0:
             tmp_mode_i -= 1
-            lcd.lcd_text("{:16}{:16}".format("Select mode:", modes[tmp_mode_i])
+            lcd.lcd_text("{:16}{:16}".format("Select mode:", modes[tmp_mode_i]))
         elif j_dir == "L":
           if tmp_mode_i < len(modes)-2:
             tmp_mode_i += 1
-            lcd.lcd_text("{:16}{:16}".format("Select mode:", modes[tmp_mode_i])
+            lcd.lcd_text("{:16}{:16}".format("Select mode:", modes[tmp_mode_i]))
       mode_i = tmp_mode_i
 
     if mode_i == 0:
