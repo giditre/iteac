@@ -3,6 +3,9 @@ from mod_nunchuck import nunchuck
 from mod_led_matrix_board import *
 from mod_halt_button import *
 from mod_floppy import *
+from mod_lcd import *
+from mod_buzzer import *
+from mod_dc_motor import *
 
 import time
 import datetime
@@ -14,9 +17,15 @@ ssb.start()
 
 lmb = LEDMatrixBoard()
 
-btn = HaltButton()
+lcd = LCD()
 
 fdr = FloppyDrive()
+
+dcm = DCMotor()
+
+bzr = Buzzer()
+
+btn = HaltButton()
 
 #wii = nunchuck()
 
@@ -40,7 +49,16 @@ try:
 
     lmb.display_string_scroll("{0:%A}".format(now), persistence=0.08)
 
+    lcd.lcd_text("{1:16}{0:%a} {0:%b} {0:%d} {0:%Y}".format(now, "Today's date:"))
+    lcd.clear()
+
+    for i in range(3):
+      bzr.beep(0.1)
+      time.sleep(0.1)
+
     fdr.play_wave("tonelist_imperialmarch_short.json")
+
+    dcm.wiggle(0.3)
 
     if btn.pressed():
       print("HaltButton")
@@ -55,4 +73,5 @@ finally:
   ssb.join()
   lmb.cleanup()
   fdr.cleanup()
+  dcm.cleanup()
   GPIO.cleanup()
