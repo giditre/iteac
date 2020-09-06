@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 
-PIR_PIN = 37
+PIR_PIN = 35
 
 GPIO.setmode(GPIO.BOARD)
 

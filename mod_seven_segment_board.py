@@ -156,9 +156,10 @@ class SevenSegmentBoard(threading.Thread):
     #print("end", end_t)
     while time.time() < end_t:
       for i in range(len(text)):
-        self.reg_out_sequence("{:08b}".format(self.disp_char_segments[text[i]]))
-        self.set_addr(i)
-        time.sleep(char_delay)
+        if text[i] != " ":
+          self.reg_out_sequence("{:08b}".format(self.disp_char_segments[text[i]]))
+          self.set_addr(i)
+          time.sleep(char_delay)
       #print("time", time.time())
       if not user_text and text != self.text:
         text = self.text

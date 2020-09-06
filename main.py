@@ -2,6 +2,7 @@ from mod_seven_segment_board import *
 from mod_nunchuck import nunchuck
 from mod_led_matrix_board import *
 from mod_halt_button import *
+from mod_floppy import *
 
 import time
 import datetime
@@ -14,6 +15,8 @@ ssb.start()
 lmb = LEDMatrixBoard()
 
 btn = HaltButton()
+
+fdr = FloppyDrive()
 
 #wii = nunchuck()
 
@@ -28,13 +31,21 @@ try:
     #  lmb.display_string_scroll("text", persistence=0.08)
     #else:
     #  time.sleep(0.1)
+
+    now = datetime.datetime.now()
+
     #ssb.display_text("{0:%H%M%d%m}".format(datetime.datetime.now()), persistence=5)
-    ssb.display_text("{0:%H%M}".format(datetime.datetime.now()), persistence=1)
-    #ssb.display_text("{0:%d%m}".format(datetime.datetime.now()), persistence=3)
-    #lmb.display_string_scroll("ITEAC", persistence=0.08)
+    ssb.display_text("{0:%H%M}".format(now), persistence=3)
+    ssb.display_text("    {0:%d%m}".format(datetime.datetime.now()), persistence=3)
+
+    lmb.display_string_scroll("{0:%A}".format(now), persistence=0.08)
+
+    fdr.play_wave("tonelist_imperialmarch_short.json")
+
     if btn.pressed():
       print("HaltButton")
       sys.exit(5)
+
 except KeyboardInterrupt:
   print("KeyboardInterrupt")
   pass
@@ -43,4 +54,5 @@ finally:
   ssb.cleanup()
   ssb.join()
   lmb.cleanup()
+  fdr.cleanup()
   GPIO.cleanup()

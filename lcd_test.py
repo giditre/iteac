@@ -55,12 +55,13 @@ import time
 import argparse
 
 # Define GPIO to LCD mapping
-LCD_RS = 3
-LCD_E  = 5
-LCD_D4 = 7
-LCD_D5 = 8
-LCD_D6 = 10
-LCD_D7 = 12
+LCD_POWER = 12
+LCD_RS = 19
+LCD_E  = 21
+LCD_D4 = 23
+LCD_D5 = 29
+LCD_D6 = 31
+LCD_D7 = 33
 
 # Define some device constants
 LCD_WIDTH = 16    # Maximum characters per line
@@ -79,6 +80,7 @@ def main():
   
   #GPIO.setwarnings(False)
   GPIO.setmode(GPIO.BOARD)     # use board pin numbers
+  GPIO.setup(LCD_POWER, GPIO.OUT, initial=GPIO.HIGH)
   GPIO.setup(LCD_E, GPIO.OUT)  # E
   GPIO.setup(LCD_RS, GPIO.OUT) # RS
   GPIO.setup(LCD_D4, GPIO.OUT) # DB4
@@ -99,7 +101,16 @@ def main():
     # some delay
     # time.sleep(3)
 
+def lcd_on():
+  # power on (negative logic)
+  GPIO.output(LCD_POWER, GPIO.LOW)
+
+def lcd_off():
+  # power off (negative logic)
+  GPIO.output(LCD_POWER, GPIO.HIGH)
+
 def lcd_init():
+  lcd_on()
   # Initialise display
   lcd_byte(0x33,LCD_CMD) # 110011 Initialise
   lcd_byte(0x32,LCD_CMD) # 110010 Initialise
@@ -199,5 +210,6 @@ if __name__ == '__main__':
     pass
   finally:
     lcd_byte(0x01, LCD_CMD)
-    lcd_string("Goodbye!",LCD_LINE_1)
+    #lcd_string("Goodbye!",LCD_LINE_1)
+    lcd_off()
     GPIO.cleanup()

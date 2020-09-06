@@ -8,10 +8,8 @@ import gpio_utils as gu
 
 class FloppyDrive():
 
-  def __init__(self, pi=None, write=29, step=31, direction=33):
+  def __init__(self, pi=None, step=10, direction=8):
 
-    # Write (Floppy Pin 22)
-    self.WRITE = gu.board_to_bcm(write)
     # Step (Floppy Pin 20)
     self.STEP = gu.board_to_bcm(step)
     # Direction (Floppy Pin 18)
@@ -35,7 +33,6 @@ class FloppyDrive():
 
     self.pi.set_mode(self.STEP, pigpio.OUTPUT)
     self.pi.set_mode(self.DIR, pigpio.OUTPUT)
-    self.pi.set_mode(self.WRITE, pigpio.OUTPUT)
 
     self.pi.wave_clear()
 
@@ -48,7 +45,7 @@ class FloppyDrive():
       self.pi.write(self.STEP, 0)
       time.sleep(0.001)
 
-  def generate_wave(self, json_file_name, n_tones_limit=42, freq_limit=440):
+  def generate_wave(self, json_file_name, n_tones_limit=42, freq_limit=440, time_scale_factor=1.15):
 
     with open(json_file_name) as f:
       tone_json = json.load(f)
@@ -58,8 +55,8 @@ class FloppyDrive():
     limit = min(n_tones_limit, len(tone_list))
     
     freq_list = [ tone["f"] for tone in tone_list[:limit] ]
-    duration_list = [ float(tone["l"]/1000.0) for tone in tone_list[:limit] ]
-    pause_list = [ float(tone["d"]/1000.0) if "d" in tone else 0 for tone in tone_list[:limit] ]
+    duration_list = [ float(tone["l"]/1000.0)*time_scale_factor for tone in tone_list[:limit] ]
+    pause_list = [ float(tone["d"]/1000.0)*time_scale_factor if "d" in tone else 0 for tone in tone_list[:limit] ]
     
     #print(freq_list)
     
@@ -122,31 +119,60 @@ class FloppyDrive():
 
     return sq_wave[:]
 
+  def play_wave(self, json_file_name):
+
+    sq_wave = self.generate_wave(json_file_name)
+    self.pi.wave_add_generic(sq_wave)
+    wid = self.pi.wave_create()
+    try:
+      if wid >= 0:
+        t1 = time.time()
+        self.pi.wave_send_once(wid)
+        while self.pi.wave_tx_busy():
+          time.sleep(0.01)
+        t2 = time.time()
+        #print("Wave duration:", t2-t1)
+    except KeyboardInterrupt:
+      pass
+    finally:
+      self.pi.wave_tx_stop()
+      self.pi.wave_delete(wid)
+      self.pi.wave_clear()
+
+  def cleanup(self):
+      self.pi.stop()   
+
 if __name__ == "__main__":
 
-  pi = pigpio.pi()
+  #pi = pigpio.pi()
 
-  fdr = FloppyDrive(pi) 
+  fdr = FloppyDrive() 
  
-  sq_wave = fdr.generate_wave("tonelist_imperialmarch.json")
+  #fdr.play_wave("tonelist_imperialmarch.json")
+  fdr.play_wave("tonelist_imperialmarch_short.json")
 
-  pi.wave_add_generic(sq_wave)
+  #sq_wave = fdr.generate_wave("tonelist_imperialmarch.json")
+  ##sq_wave = fdr.generate_wave("tonelist_mariovictory.json")
 
-  wid = pi.wave_create()
-  print(wid)
+  #pi.wave_add_generic(sq_wave)
 
-  try:
-    if wid >= 0:
-      t1 = time.time()
-      pi.wave_send_once(wid)
-      while pi.wave_tx_busy():
-        time.sleep(0.01)
-      t2 = time.time()
-      print(t2-t1)
-  except KeyboardInterrupt:
-    pass
-  finally:
-    pi.wave_tx_stop()
-    pi.wave_delete(wid)
-    pi.wave_clear()
-    pi.stop()
+  #wid = pi.wave_create()
+  #print("Wave ID:", wid)
+
+  #try:
+  #  if wid >= 0:
+  #    t1 = time.time()
+  #    pi.wave_send_once(wid)
+  #    while pi.wave_tx_busy():
+  #      time.sleep(0.01)
+  #    t2 = time.time()
+  #    print("Wave duration:", t2-t1)
+  #except KeyboardInterrupt:
+  #  pass
+  #finally:
+  #  pi.wave_tx_stop()
+  #  pi.wave_delete(wid)
+  #  pi.wave_clear()
+  #  pi.stop()
+
+  fdr.cleanup()
