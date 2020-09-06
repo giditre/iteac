@@ -14,13 +14,13 @@
 
 from smbus import SMBus
 import RPi.GPIO as rpi
-import time as time
+import time
 
 bus = 0
 
 class nunchuck:
 
-  def __init__(self,delay = 0.05):
+  def __init__(self, delay = 0.05):
     self.delay = delay
     if rpi.RPI_REVISION == 1:
       i2c_bus = 0
@@ -88,7 +88,48 @@ class nunchuck:
   def setdelay(self,delay):
     self.delay = delay
 
-
   def scale(self,value,_min,_max,_omin,_omax):
     return (value - _min) * (_omax - _omin) // (_max - _min) + _omin
 
+  def joystick_direction(self):
+    # experimentally:
+    # joystick x: LEFT 35 - RIGHT 234
+    # joystick y: DOWN 33 - UP 222
+    x = self.joystick_x()
+    y = self.joystick_y()
+
+    thresh_low = 50
+    thresh_high = 200
+
+    if x < thresh_low:
+      # left
+      return "L"
+    elif x > thresh_high:
+      # right
+      return "R"
+    elif y < thresh_low:
+      # down
+      return "D"
+    elif y > thresh_high:
+      # up
+      return "U"
+    else:
+      # neutral position
+      return "N"
+
+if __name__ == "__main__":
+
+  wii = nunchuck()
+
+  try:
+
+    while True:
+      #print(wii.joystick_x(), wii.joystick_y())
+      print(wii.joystick_direction())
+      time.sleep(0.001)
+
+  except KeyboardInterrupt:
+    pass
+
+  finally:
+    pass
