@@ -37,20 +37,21 @@ try:
 
   while True:
 
-    if wii.button_z():
+    if wii.button_c():
       tmp_mode_i = mode_i
       lcd.lcd_text("{:16}{:16}".format("Select mode:", modes[tmp_mode_i]))
-      while wii.button_z():
+      while wii.button_c():
         j_dir = wii.joystick_direction()
-        if j_dir == "R":
+        if j_dir == "L":
           if tmp_mode_i > 0:
             tmp_mode_i -= 1
             lcd.lcd_text("{:16}{:16}".format("Select mode:", modes[tmp_mode_i]))
-        elif j_dir == "L":
-          if tmp_mode_i < len(modes)-2:
+        elif j_dir == "R":
+          if tmp_mode_i < len(modes)-1:
             tmp_mode_i += 1
             lcd.lcd_text("{:16}{:16}".format("Select mode:", modes[tmp_mode_i]))
       mode_i = tmp_mode_i
+      lcd.clear()
 
     if mode_i == 0:
       now = datetime.datetime.now()
@@ -77,7 +78,8 @@ try:
 
     if btn.pressed():
       print("HaltButton")
-      sys.exit(5)
+      lcd.lcd_text("{:16}{:16}".format("HaltButton", "was pressed!"))
+      sys.exit(57)
 
 except KeyboardInterrupt:
   print("KeyboardInterrupt")
