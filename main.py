@@ -27,7 +27,11 @@ bzr = Buzzer()
 
 btn = HaltButton()
 
-wii = nunchuck()
+# TODO handle case when no nunchuck is connected
+try:
+  wii = nunchuck()
+except OSError:
+  pass
 
 modes = ["Demo", "7 Segment Board", "LED Matrix", "Buzzer", "Presence sensor", "Floppy Music", "Printer Cart"]
 
@@ -90,6 +94,7 @@ finally:
   ssb.cleanup()
   ssb.join()
   lmb.cleanup()
+  lcd.cleanup()
   fdr.cleanup()
   dcm.cleanup()
   GPIO.cleanup()
