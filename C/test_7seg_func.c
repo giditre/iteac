@@ -54,6 +54,10 @@ void set_addr (int a) {
   digitalWrite (GPIOADDR2, (addr[a]>>0)&1);
 }
 
+void shift_out_byte (char value) {
+  shiftOut(GPIOREGD, GPIOREGSH, MSBFIRST, value);
+}
+
 void store (void) {
   digitalWrite (GPIOREGST, HIGH);
   //delay (500);   // mS 
@@ -118,13 +122,13 @@ int display_digits(int digits[], int n_digits, int duration) {
   // display digits by cycling over all digits a sufficient number of times to achieve duration
   for (l = 0; l < n_cycles; l++) {
     for (i = 0; i < n_digits; i++) {
-      shiftOut(GPIOREGD, GPIOREGSH, MSBFIRST, segments[i]);
+      shift_out_byte(segments[i]);
       store();
       set_addr(i);
       delay(persistence_time);
     }
   }
-  // clear aoutput and leave
+  // clear output and leave
   clear();
   return 0; 
 }
